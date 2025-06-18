@@ -1,3 +1,5 @@
+-- garrysmod/lua/autorun/smart_noclip.lua
+
 --[[ [shared] smart noclip
 
 description:
@@ -236,7 +238,7 @@ if SERVER then
         set_noclip_cooldown(ply, REASON.PROP_THROW)
     end)
     hook.Add("PhysgunDrop", "smart_noclip_prop_drop", function(ply, ent)
-        timer.Simple(0, function ()
+        timer.Simple(0, function()
             if IsValid(ent) then
                 if ent:GetVelocity():Length() > deadly_prop_speed then
                     add_physics_callback(ent, ply)

@@ -1,3 +1,5 @@
+-- garrysmod/lua/autorun/info_tab.lua
+
 if SERVER then
     util.AddNetworkString("ScoreUpdate")
     util.AddNetworkString("FreezeProps")
@@ -39,7 +41,7 @@ if SERVER then
             }
         end
     end
- 
+
     local function CountPlayerProps(ply)
         local props_active = 0
         local props_frozen = 0
@@ -151,12 +153,12 @@ if SERVER then
     end
 
     local function SendServerInfo()
-        net.Start( "ServerInfoUpdate" )
-            net.WriteFloat( external_server_info.cpu_usage  )   -- 32-bit float
-            net.WriteUInt ( external_server_info.mem_used, 32 ) -- up to 4 GiB
+        net.Start("ServerInfoUpdate")
+        net.WriteFloat(external_server_info.cpu_usage)   -- 32-bit float
+        net.WriteUInt(external_server_info.mem_used, 32) -- up to 4 GiB
         net.Broadcast()
     end
-    timer.Create( "SendServerInfo", 2, 0, SendServerInfo )
+    timer.Create("SendServerInfo", 2, 0, SendServerInfo)
 
     -- Track player statistics
     hook.Add("PlayerDeath", "scoreboard_track_deaths", function(victim, inflictor, attacker)
@@ -216,22 +218,22 @@ elseif CLIENT then
     local external_server_info = {
         cpu_usage = 0,
         mem_used = 0,
-        mem_total = 8192  -- Set your server's max RAM here in MB
+        mem_total = 8192 -- Set your server's max RAM here in MB
     }
 
     net.Receive("ScoreUpdate", function()
-        local len  = net.ReadUInt(16)
-        local raw  = net.ReadData(len)      -- already a proper string
+        local len     = net.ReadUInt(16)
+        local raw     = net.ReadData(len) -- already a proper string
 
         local players = {}
 
         for entry in raw:gmatch("[^;]+") do
             local f = {}
-            for v in entry:gmatch("[^,]+") do f[#f+1] = v end
+            for v in entry:gmatch("[^,]+") do f[#f + 1] = v end
 
             local kills  = tonumber(f[2]) or 0
             local deaths = tonumber(f[3]) or 1 -- avoid div0
-            
+
 
             -- Extract server info from first player's data
             if #f > 10 and f[11] ~= "" then
@@ -242,7 +244,9 @@ elseif CLIENT then
                 if #server_parts == 2 then
                     external_server_info.cpu_usage = tonumber(server_parts[1]) or 0
                     external_server_info.mem_used = tonumber(server_parts[2]) or 0
-                    print("Server Info Updated: CPU=" .. external_server_info.cpu_usage .. "%, RAM=" .. external_server_info.mem_used .. "/" .. external_server_info.mem_total .. "MB")
+                    print("Server Info Updated: CPU=" ..
+                        external_server_info.cpu_usage ..
+                        "%, RAM=" .. external_server_info.mem_used .. "/" .. external_server_info.mem_total .. "MB")
                     print(1)
                 end
             end
@@ -264,10 +268,10 @@ elseif CLIENT then
         SCOREBOARD_DATA = players
     end)
 
-    net.Receive( "ServerInfoUpdate", function()
+    net.Receive("ServerInfoUpdate", function()
         external_server_info.cpu_usage = net.ReadFloat()
         external_server_info.mem_used  = net.ReadUInt(32)
-    end )
+    end)
 
     local font_scale_convar = CreateClientConVar("cl_buildhud_scale", "14", true, false)
     local alpha_convar = CreateClientConVar("cl_buildhud_alpha", "200", true, false)

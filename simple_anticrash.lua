@@ -2,20 +2,19 @@
 
 --[[ [shared] simple anticrash
 
+thanks Iced Coffee for inspiration from
+https://github.com/propkilldb/propkill/blob/master/gamemode/server/antilag.lua
+
 description:
     simple anti crash logic that works by accumulating the stress of physical objects
-    this script is far from perfect:
-        it only deals with props that are stuck and will give unnecessary CPU load,
-        if there's lots of freely moving props without any stress it wont get frozen
 
 features:
-    if over time the object is not moving and the occumulated stress exceeds limits:
-        prop freezes,
-        prop emits a sound
+    prop freezes,
+    prop emits a sound
     settings available in Context Menu -> Utilities -> Admin -> Anti-Crash settings
 
 TODO:
-- sv_anticrash_action "nocollide"/"freeze"/"pull apart"
+- sv_anticrash_action nocollide/sleep/pull apart
 ]]
 
 if SERVER then

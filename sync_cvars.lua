@@ -1,3 +1,5 @@
+-- garrysmod/lua/autorun/sync_cvars.lua
+
 if SERVER then
     util.AddNetworkString("sv_cvar_change")
     util.AddNetworkString("cl_cvar_update")
@@ -6,7 +8,7 @@ if SERVER then
     local function on_sv_cvar_change(len, ply)
         local cvar_name = net.ReadString()
         local cvar_value = net.ReadString()
-    
+
         local cvar = GetConVar(cvar_name)
         if cvar and ply:GetUserGroup() == "superadmin" then
             local type = cvar:GetHelpText()
@@ -18,8 +20,8 @@ if SERVER then
                 cvar:SetInt(tonumber(cvar_value))
             end
             net.Start("cl_cvar_update")
-                net.WriteString(cvar_name)
-                net.WriteString(cvar_value)
+            net.WriteString(cvar_name)
+            net.WriteString(cvar_value)
             net.Broadcast()
         end
     end
@@ -39,17 +41,16 @@ if SERVER then
                 value = tostring(cvar:GetInt())
             end
             net.Start("cl_cvar_update")
-                net.WriteString(cvar_name)
-                net.WriteString(value)
+            net.WriteString(cvar_name)
+            net.WriteString(value)
             net.Send(ply)
         end
     end
     net.Receive("sv_request_cvar_value", on_sv_request_cvar_value)
-
 elseif CLIENT then
     sync_elems = sync_elems or {}
 
-    net.Receive("cl_cvar_update", function ()
+    net.Receive("cl_cvar_update", function()
         local cmd = net.ReadString()
         local val = net.ReadString()
         for _, v in pairs(sync_elems[cmd] or {}) do
@@ -90,7 +91,7 @@ elseif CLIENT then
             if elem:IsEditing() ~= true then return end
             net.Start("sv_cvar_change")
             net.WriteString(cmd)
-            net.WriteString(tostring(value)) 
+            net.WriteString(tostring(value))
             net.SendToServer()
         end
         elem:SetName("slider")
@@ -110,7 +111,7 @@ elseif CLIENT then
             if elem:IsEditing() ~= true then return end
             net.Start("sv_cvar_change")
             net.WriteString(cmd)
-            net.WriteString(tostring(math.floor(value))) 
+            net.WriteString(tostring(math.floor(value)))
             net.SendToServer()
         end
         elem:SetName("slider")
